@@ -3,11 +3,10 @@
 Created on Mon Jul  4 14:03:28 2016
 
 @author: Bluefish_
-Class name: Visvalingam
+Class Name: Visvalingam
 
 """
 
-from TwoDimVector import TwoDimVector as v
 from VisNode import VisNode as node
 
 class Visvalingam:
@@ -18,17 +17,17 @@ class Visvalingam:
     
     def __init__(self, pts):
         ''' 
-        Store the points and initialize the two lists. 
+        Store the points and initialize the two lists . 
         '''
-        nodes = []
-        nodes.append(node(0, v(0,0), v(pts[1,0],pts[1,1]), pts[0]))
-        s = len(pts) - 1
-        for i in range(1, s):
-            nodes.append(node(i, v(pts[i-1],pts[i]), v(pts[i+1],pts[i]), pts[i]))
-        nodes.append(node(s, v(pts[s,0],pts[s,1]), v(0,0), pts[s]))
-        self.original = nodes
+        self.N = len(pts) - 1
+        nd = []
+        nd.append(node(0, pts[0], pts[0], pts[1]))
+        for i in range(1, self.N):
+            nd.append(node(i, pts[i-1], pts[i], pts[i+1]))
+        nd.append(node(self.N, pts[self.N-1], pts[self.N], pts[self.N]))
+        self.original = nd
         self.newdict = {}
-        self.newlist = []
+        self.last_area = 0
     
     def findMinAreaNode(self):
         ''' 
@@ -36,7 +35,7 @@ class Visvalingam:
         '''
         minArea = float("infinity")
         minNode = None
-        for item in self.original:
+        for item in self.original[1:-2]:
             if minArea > item.area:
                 minArea = item.area
                 minNode = item
@@ -44,29 +43,47 @@ class Visvalingam:
     
     def cleanup(self):
         '''
-        Deletes all nodes with area 0 and store them in a list 
-        with their areas. This prepares for the while loop.
+        Deletes all nodes with area 0 except for the first and last nodes. 
+        Store the id in a dictionary with their areas. 
+        Store the areas in a list. This prepares for the while loop.
         '''
-        for item in self.original:
+        for item in self.original[1:-2]:
             if item.area == 0:
                 self.newdict[item.id] = item.area
-                self.newlist.append(item.area)
-                item.delete() # todo: need to consider end nodes
-    
+                item.delete()
+        self.newdict[0] = 0
+        self.newdict[self.N] = 0
+     
     def main(self):
         '''
         Execute the simplification process.        
         '''
-        
         self.cleanup()
-        while len(self.original) > 0:
+        while len(self.newdict.keys()) < (self.N + 1):
             curr = self.findMinAreaNode()
-            last_area = self.newlist[len(self.newlist)-1]
-            if curr.area < last_area:
-                curr.area = last_area
+            if curr.area < self.last_area:
+                curr.area = self.last_area
             self.newdict[curr.id] = curr.area
-            self.newlist.append(curr.area)
-            self.original.remove(curr.area)
+            self.last_area = curr.area
+            # self.original.pop(curr.id)
             curr.delete()
-            
-            
+    
+    def getVisFilter(self):
+        '''
+        Return the resulted filter in the form of dictionary.         
+        '''
+        self.main()
+        return self.newdict
+        
+    def getSimplified(self, threshold):
+        '''
+        Return a list of indices for points that are important according to
+        a given threshold for effective areas.
+        Also return the simplification rate under this threshold. 
+        '''
+        indices = [0]
+        for index, area in self.newdict.keys(), self.newdict.values():
+            if area > threshold:
+                indices.append(index)
+        indices.append(self.N)
+        return indices, len(indices)/self.N

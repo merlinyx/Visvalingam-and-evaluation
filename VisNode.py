@@ -3,7 +3,7 @@
 Created on Mon Jul  4 17:00:52 2016
 
 @author: Bluefish_
-Class name: VisNode
+Class Name: VisNode
 
 """
 
@@ -14,37 +14,47 @@ class VisNode:
     A self-defined data structure to assist the Visvalingam algorithm. 
     '''
     
-    def __init__(self, index, lvector, rvector, curr):
+    def __init__(self, index, prev, curr, post):
         ''' 
         Initialize a Visvalingam node. 
         '''
         self.id = index
-        self.left = lvector
-        self.right = rvector
-        self.curr = curr
-        self.area = self.left.area(self.right)
-        # todo: need to add prev and post nodes.
+        self.left = prev
+        self.curr = curr        
+        self.right = post
+        self.area = self.updateArea()
+    
+    def updateArea(self):
+        '''
+        Update the area associated with this node.         
+        '''
+        vLeft = vector(self.prev, self.curr)
+        vRight = vector(self.post, self.curr)
+        return vLeft.area(vRight)
     
     def updateR(self, post):
         ''' 
         Change the next node of the current node. 
         '''
-        self.right = vector(post, self.curr)
-        self.area = self.left.area(self.right)
+        self.right = post
+        self.area = self.updateArea()
     
     def updateL(self, prev):
         ''' 
         Change the previous node of the current node. 
         '''
-        self.left = vector(self.curr, prev)
-        self.area = self.right.area(self.left)
+        self.left = prev
+        self.area = self.updateArea()
     
     def delete(self):
         ''' 
-        Set all fields of the current node to None to delete it. 
+        Set itself to an ineffective node, and connect its prev and post nodes.
         '''
-        self.id = None
-        self.left = None
-        self.right = None
-        self.area = None
-    
+        # self.id = None
+        self.left = [0,0]
+        self.right = [0,0]
+        self.area = 0
+        prev_ = self.left
+        post_ = self.right
+        prev_.updateR(post_)
+        post_.updateL(prev_)
