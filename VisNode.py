@@ -28,8 +28,8 @@ class VisNode:
         '''
         Update the area associated with this node.         
         '''
-        vLeft = vector(self.prev, self.curr)
-        vRight = vector(self.post, self.curr)
+        vLeft = vector(self.left, self.curr)
+        vRight = vector(self.right, self.curr)
         return vLeft.area(vRight)
     
     def updateR(self, post):
@@ -46,15 +46,13 @@ class VisNode:
         self.left = prev
         self.area = self.updateArea()
     
-    def delete(self):
+    def delete(self, prev, post):
         ''' 
         Set itself to an ineffective node, and connect its prev and post nodes.
         '''
         # self.id = None
         self.left = [0,0]
         self.right = [0,0]
-        self.area = 0
-        prev_ = self.left
-        post_ = self.right
-        prev_.updateR(post_)
-        post_.updateL(prev_)
+        self.area = float("infinity")
+        prev.updateR(post.left)
+        post.updateL(prev.right)

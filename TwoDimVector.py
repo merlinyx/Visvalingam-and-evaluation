@@ -35,7 +35,13 @@ class TwoDimVector:
     def cosine(self, v):
         ''' Calculate the cosine value of the angle between itself 
             and another vector v. '''
-        return self.dot(v) / self.normProd(v)
+        if self.normProd(v) == 0:
+            return 1;
+        result = self.dot(v) / self.normProd(v)
+        if result <= 1:
+            return result
+        else:
+            return 1
     
     def ang(self, v):
         ''' Calculate the angle (in radians) between itself and another 

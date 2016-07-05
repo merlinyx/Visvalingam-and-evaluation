@@ -47,10 +47,11 @@ class Visvalingam:
         Store the id in a dictionary with their areas. 
         Store the areas in a list. This prepares for the while loop.
         '''
-        for item in self.original[1:-2]:
+        for i in range(1, self.N):
+            item = self.original[i]
             if item.area == 0:
-                self.newdict[item.id] = item.area
-                item.delete()
+                self.newdict[i] = item.area
+                item.delete(self.original[i-1], self.original[i+1])
         self.newdict[0] = 0
         self.newdict[self.N] = 0
      
@@ -61,12 +62,14 @@ class Visvalingam:
         self.cleanup()
         while len(self.newdict.keys()) < (self.N + 1):
             curr = self.findMinAreaNode()
+            i = curr.id
+            print(i)
             if curr.area < self.last_area:
                 curr.area = self.last_area
-            self.newdict[curr.id] = curr.area
+            self.newdict[i] = curr.area
             self.last_area = curr.area
             # self.original.pop(curr.id)
-            curr.delete()
+            curr.delete(self.original[i-1], self.original[i+1])
     
     def getVisFilter(self):
         '''
