@@ -13,15 +13,15 @@ class TwoDimVector:
     ''' A class of 2D vector that assists the Visvalingam algorithm and
         some other measures for evaluating the algorithm. '''
   
-    def __init__(self, x_, y_):
-        ''' Initialize a 2D vector from its coordinates. '''
-        self.x = x_
-        self.y = y_
+    def __init__(self, x, y):
+        ''' Initialize a 2D vector from its coordinates. ''' 
+        self.x = x
+        self.y = y
         self.norm = (self.x*self.x + self.y*self.y)**0.5
     
     @classmethod
-    def fromTwoPoints(cls, a, b):
-        ''' Initialize a 2D vector from the coordinates of two points. '''        
+    def from2Pts(cls, a, b):
+        ''' Initialize a 2D vector from the coordinates of two points. '''
         return cls(a[0]-b[0], a[1]-b[1])
     
     def normProd(self, v):
