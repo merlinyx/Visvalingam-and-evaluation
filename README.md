@@ -27,3 +27,8 @@ rel(bw);
 out;
 ```
 This gives all the relations about the ways.  
+
+### Evaluation part
+I think with the vector class, the exterior angle of each point can be calculated, and this will become a measure of angularity. 
+The other is the number of coordinates per unit length of the curve. 
+Still need to implement...
